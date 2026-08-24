@@ -21,7 +21,7 @@ tags = ["visual-app", "a2ui", "forge"]
 
 [marketplace]
 short_description = "Build a responsive A2UI Visual App collaboratively with Worka Forge."
-screenshots = []
+screenshots = ["docs/screenshots/forge-live-preview.png"]
 
 [fst]
 
