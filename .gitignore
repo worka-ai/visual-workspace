@@ -1,0 +1,7 @@
+.DS_Store
+*.pyc
+__pycache__/
+target/
+node_modules/
+.worka/bin/*
+!.worka/bin/.gitkeep

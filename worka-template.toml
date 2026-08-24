@@ -1,0 +1,30 @@
+schema_version = 1
+
+[template]
+id = "worka-ai/visual-workspace"
+name = "Visual App Workspace"
+summary = "A collaborative A2UI Visual App workspace built through Forge vSDLC."
+version = "0.1.0"
+license = "Apache-2.0"
+min_worka_version = "0.1.0"
+kind = "visual_app"
+
+[publisher]
+source = "github"
+owner_kind = "org"
+owner = "worka-ai"
+repo = "visual-workspace"
+
+[classification]
+categories = ["development", "operations"]
+tags = ["visual-app", "a2ui", "forge"]
+
+[marketplace]
+short_description = "Build a responsive A2UI Visual App collaboratively with Worka Forge."
+screenshots = []
+
+[fst]
+
+[app]
+native_binary = false
+plugin = false
