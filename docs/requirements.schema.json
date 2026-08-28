@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://worka.ai/schemas/forge/requirements.schema.json",
+  "title": "Worka Requirements Document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "app_name",
+    "intent_summary",
+    "personas",
+    "user_stories",
+    "functional_requirements",
+    "data_requirements",
+    "personaldb_groups",
+    "packs",
+    "non_functional_requirements",
+    "explicit_non_goals"
+  ],
+  "properties": {
+    "schema_version": {"const": "worka.requirements.v1"},
+    "app_name": {"$ref": "#/$defs/non_empty_string"},
+    "intent_summary": {"$ref": "#/$defs/non_empty_string"},
+    "personas": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/persona"}},
+    "user_stories": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/user_story"}},
+    "functional_requirements": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/requirement"}},
+    "data_requirements": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/data_requirement"}},
+    "personaldb_groups": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/personaldb_group_requirement"}},
+    "packs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/pack_requirement"}},
+    "ai_team": {"$ref": "#/$defs/ai_team_requirement"},
+    "generated_app_mcp_tools": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/generated_app_tool_requirement"}},
+    "activity_events": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/activity_event_requirement"}},
+    "inline_attention": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/inline_attention_requirement"}},
+    "non_functional_requirements": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/requirement"}},
+    "explicit_non_goals": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/non_empty_string"}}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"},
+    "screen_id": {"type": "string", "pattern": "^screen-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "route_id": {"type": "string", "pattern": "^route-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "req_id": {"type": "string", "pattern": "^req-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "req_id_array": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/req_id"}},
+    "screen_id_array": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/screen_id"}},
+    "non_empty_string": {"type": "string", "minLength": 1},
+    "string_array": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/non_empty_string"}},
+    "schema_like": {
+      "anyOf": [
+        {"$ref": "#/$defs/non_empty_string"},
+        {"type": "object"},
+        {"type": "array"}
+      ]
+    },
+    "id_array": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "priority": {"enum": ["must", "should", "could"]},
+    "persona": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "description", "goals"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^persona-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "name": {"$ref": "#/$defs/non_empty_string"},
+        "description": {"$ref": "#/$defs/non_empty_string"},
+        "goals": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/non_empty_string"}}
+      }
+    },
+    "user_story": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "persona_ids", "title", "story", "requirement_ids"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^story-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "persona_ids": {"$ref": "#/$defs/id_array"},
+        "title": {"$ref": "#/$defs/non_empty_string"},
+        "story": {"$ref": "#/$defs/non_empty_string"},
+        "requirement_ids": {"$ref": "#/$defs/id_array"}
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "description", "priority", "acceptance_hint"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^req-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "title": {"$ref": "#/$defs/non_empty_string"},
+        "description": {"$ref": "#/$defs/non_empty_string"},
+        "priority": {"$ref": "#/$defs/priority"},
+        "acceptance_hint": {"$ref": "#/$defs/non_empty_string"}
+      }
+    },
+    "data_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "description", "entities", "priority"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^data-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "title": {"$ref": "#/$defs/non_empty_string"},
+        "description": {"$ref": "#/$defs/non_empty_string"},
+        "entities": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/non_empty_string"}},
+        "priority": {"$ref": "#/$defs/priority"}
+      }
+    },
+    "personaldb_group_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "purpose", "tables"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
+        "purpose": {"$ref": "#/$defs/non_empty_string"},
+        "tables": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/non_empty_string"}}
+      }
+    },
+    "pack_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "publisher", "pack_name", "source", "description", "tools", "integration_requirements", "priority"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^pack-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "publisher": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*(?:[.-][a-z0-9_-]+)*$"},
+        "pack_name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"},
+        "source": {"enum": ["built_in", "marketplace", "workspace_local"]},
+        "description": {"$ref": "#/$defs/non_empty_string"},
+        "tools": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/pack_tool_requirement"}},
+        "integration_requirements": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/non_empty_string"}},
+        "priority": {"$ref": "#/$defs/priority"}
+      }
+    },
+    "pack_tool_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "purpose", "required"],
+      "properties": {
+        "name": {"$ref": "#/$defs/non_empty_string"},
+        "purpose": {"$ref": "#/$defs/non_empty_string"},
+        "required": {"type": "boolean"}
+      }
+    },
+    "ai_team_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agents", "tool_grants", "rules", "hooks"],
+      "properties": {
+        "agents": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ai_agent_requirement"}},
+        "tool_grants": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/tool_grant_requirement"}},
+        "rules": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/rule_requirement"}},
+        "hooks": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/hook_requirement"}}
+      }
+    },
+    "ai_agent_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "role", "read_only"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^agent-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "name": {"$ref": "#/$defs/non_empty_string"},
+        "role": {"$ref": "#/$defs/non_empty_string"},
+        "read_only": {"type": "boolean"}
+      }
+    },
+    "tool_grant_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_id", "tool_source", "tool_names", "reason"],
+      "properties": {
+        "agent_id": {"type": "string", "pattern": "^agent-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "tool_source": {"enum": ["pack", "generated_app_mcp"]},
+        "pack_id": {"type": "string", "pattern": "^pack-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "app_tool_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^app-tool-[a-z0-9]+(?:-[a-z0-9]+)*$"}},
+        "tool_names": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/non_empty_string"}},
+        "side_effect_class": {"enum": ["read_only", "write", "external_side_effect", "destructive"]},
+        "requires_approval": {"type": "boolean"},
+        "reason": {"$ref": "#/$defs/non_empty_string"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"tool_source": {"const": "pack"}}, "required": ["tool_source"]},
+          "then": {"required": ["pack_id"]}
+        },
+        {
+          "if": {"properties": {"tool_source": {"const": "generated_app_mcp"}}, "required": ["tool_source"]},
+          "then": {"required": ["app_tool_ids"]}
+        }
+      ]
+    },
+    "rule_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "agent_id", "description", "priority"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^rule-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "agent_id": {"type": "string", "pattern": "^agent-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "description": {"$ref": "#/$defs/non_empty_string"},
+        "priority": {"$ref": "#/$defs/priority"}
+      }
+    },
+    "hook_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "trigger", "effect", "priority"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^hook-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "trigger": {"$ref": "#/$defs/non_empty_string"},
+        "effect": {"$ref": "#/$defs/non_empty_string"},
+        "priority": {"$ref": "#/$defs/priority"}
+      }
+    },
+    "generated_app_tool_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "purpose", "side_effect_class", "requires_personaldb"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^app-tool-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "purpose": {"$ref": "#/$defs/non_empty_string"},
+        "side_effect_class": {"enum": ["read_only", "write", "external_side_effect", "destructive"]},
+        "requires_personaldb": {"type": "boolean"}
+      }
+    },
+    "activity_event_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "source", "purpose"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^event-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "label": {"$ref": "#/$defs/non_empty_string"},
+        "source": {"enum": ["integration", "agent", "hook", "generated_app_tool", "user", "system"]},
+        "purpose": {"$ref": "#/$defs/non_empty_string"}
+      }
+    },
+    "inline_attention_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "context", "renderer_required"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^attention-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "kind": {"enum": ["elicitation", "notification"]},
+        "context": {"$ref": "#/$defs/non_empty_string"},
+        "renderer_required": {"const": true}
+      }
+    }
+  }
+}
