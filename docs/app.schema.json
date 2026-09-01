@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://worka.ai/schemas/visual-app-manifest-v1.json",
+  "title": "Worka Visual App Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "appId",
+    "version",
+    "entrySurface",
+    "screens",
+    "requiredCatalogs"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "worka.visual-app.v1" },
+    "kind": { "const": "visual_wapp" },
+    "appId": { "$ref": "#/$defs/identity" },
+    "version": { "$ref": "#/$defs/identity" },
+    "entrySurface": { "type": "string", "minLength": 1 },
+    "screens": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/surface" }
+    },
+    "portals": {
+      "type": "object",
+      "default": {},
+      "additionalProperties": { "$ref": "#/$defs/surface" }
+    },
+    "routes": {
+      "type": "array",
+      "default": [],
+      "items": { "$ref": "#/$defs/route" }
+    },
+    "requiredCatalogs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/identity" }
+    },
+    "requiredPacks": {
+      "type": "array",
+      "default": [],
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/pack" }
+    },
+    "hostFunctions": {
+      "type": "array",
+      "default": [],
+      "maxItems": 1,
+      "uniqueItems": true,
+      "items": { "const": "worka.mcp.invoke_tool" }
+    },
+    "prefetch": { "$ref": "#/$defs/prefetch" }
+  },
+  "$defs": {
+    "identity": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 }
+      }
+    },
+    "pack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["publisher", "name"],
+      "properties": {
+        "publisher": { "$ref": "#/$defs/identity" },
+        "name": { "$ref": "#/$defs/identity" }
+      }
+    },
+    "routeParameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "required": { "type": "boolean", "default": false }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "surface"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^/" },
+        "surface": { "type": "string", "minLength": 1 },
+        "parameters": {
+          "type": "array",
+          "default": [],
+          "items": { "$ref": "#/$defs/routeParameter" }
+        }
+      }
+    },
+    "prefetch": {
+      "type": "object",
+      "additionalProperties": false,
+      "default": {},
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "adjacentRoutes": { "type": "boolean", "default": false },
+        "maxRoutes": { "type": "integer", "minimum": 0, "default": 0 }
+      }
+    }
+  }
+}

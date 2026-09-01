@@ -3,5 +3,6 @@
 __pycache__/
 target/
 node_modules/
+.tmp/
 .worka/bin/*
 !.worka/bin/.gitkeep
