@@ -6,3 +6,4 @@ node_modules/
 .tmp/
 .worka/bin/*
 !.worka/bin/.gitkeep
+.tmp/
